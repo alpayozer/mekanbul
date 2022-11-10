@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+require('./app_server/models/db'); //veritabanını uygulamaya tanıttık
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
