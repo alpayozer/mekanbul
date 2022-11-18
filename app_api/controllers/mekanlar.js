@@ -31,7 +31,7 @@ const mekanlariListele= async (req,res)=>{
         distanceField: "mesafe",
         spherical: true
     };
-    if((!enlem && boylam !==0) || (!enlem && boylam !==0)){
+    if((!enlem && boylam !==0)){
         cevapOlustur(res,404,{"hata":"enlem ve boylam zorunlu parametreler"});
         return;
     }
