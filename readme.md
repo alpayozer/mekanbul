@@ -6,3 +6,7 @@
 ![](resimler/getId.png)
 [3.Bir Mekana Ait Belirli Bir Yorumu Getir](https://mekanbul5.alpayzer.repl.co/api/mekanlar/63780110b8ccfef23b6798c8/yorumlar/63780117ff55c3017a8839d1)
 ![](resimler/getMekanYorum.png)
+
+# MekanBul Rest API Test Sonucu
+---
+![](resimler/runTest.png)
