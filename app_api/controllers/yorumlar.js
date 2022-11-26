@@ -6,6 +6,59 @@ const cevapOlustur=function(res,status,content){
     .json(content);
 }
 
+//expect(response.status).to.eql(201);
+
+//const response= await request.get(/api/mekanlar/${process.env.mekanid})
+//    /api/mekanlar/{{mekanid}}
+var sonPuanHesapla = function(gelenMekan){
+    var i,yorumSayisi,ortalamaPuan,toplamPuan;
+    if(gelenMekan.yorumlar && gelenMekan.yorumlar.length>0){
+        yorumSayisi = gelenMekan.yorumlar.length;
+        toplamPuan = 0;
+        for(i=0;i<yorumSayisi;i++){
+            toplamPuan = toplamPuan + gelenMekan.yorumlar[i].puan;
+        }
+        ortalamaPuan = parseInt(toplamPuan / yorumSayisi,10);
+        gelenMekan.puan = ortalamaPuan;
+        gelenMekan.save(function(hata){
+            if(hata){
+                console.log(hata);
+            }
+        });
+    }
+}
+
+var ortalamaPuanGuncelle = function(mekanid){
+    Mekan.findById(mekanid).select("puan yorumlar").exec(function(hata,mekan){
+        if(!hata){
+            sonPuanHesapla(mekan);
+        }
+    });
+}
+
+var yorumOlustur = function(req,res,gelenMekan){
+    if(!gelenMekan){
+        cevapOlustur(res,404,{"hata": "mekanid bulunamadı"});
+    }else{
+        gelenMekan.yorumlar.push({
+            yorumYapan: req.body.yorumYapan,
+            puan: req.body.puan,
+            yorumMetni: req.body.yorumMetni,
+            tarih: Date.now()
+        });
+        gelenMekan.save(function(hata,mekan){
+            var yorum;
+            if(hata){
+                cevapOlustur(res,400,hata);
+            }else{
+                ortalamaPuanGuncelle(mekan._id);
+                yorum = mekan.yorumlar[yorumlar.length-1];
+                cevapOlustur(res,201,yorum);
+            }
+        })
+    }
+}
+
 const yorumEkle=function(req,res){
     cevapOlustur(res,200,{"durum":"başarılı"});
 }
