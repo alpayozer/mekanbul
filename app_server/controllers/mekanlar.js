@@ -1,31 +1,61 @@
 var express = require('express');
 var router = express.Router();
 
-const anaSayfa = function(req,res,next){
-    res.render('anasayfa', {
-        "baslik": "Anasayfa",
-        "sayfaBaslik": {
-            "siteAd": "MekanBul",
-            "slogan": "Civardaki Mekanları Keşfet"
-        },
-        "mekanlar": [
-            {
-                "ad": "Starbucks",
-                "adres": "Centrum Garden AVM",
-                "puan": "4",
-                "imkanlar": ["Kahve", "Pasta", "Kek"],
-                "mesafe": "10km"
-            },
-            {
-                "ad": "Gloria Jeans",
-                "adres": "SDÜ Doğu Kampüsü",
-                "puan": "2",
-                "imkanlar": ["Kahve", "Çay", "Kek"],
-                "mesafe": "1km"
-            }
-        ]   
+const axios=require("axios");
+var apiSecenekleri = {
+    sunucu: "http://localhost:3000",
+    apiYolu: "/api/mekanlar/"
+}
+
+var mesafeyiFormatla = function(mesafe){
+    var yeniMesafe, birim;
+    if(mesafe>1){
+        yeniMesafe = parseFloat(mesafe).toFixed(1);
+        birim = " km";
+    }else{
+        yeniMesafe = parseInt(mesafe*1000,10);
+        birim = " m";
     }
-    );
+    return yeniMesafe + birim;
+}
+
+var anaSayfaOlustur = function(res,mekanListesi){
+    var mesaj;
+    if(!(mekanListesi instanceof(Array))){
+        mesaj = "API HATASI: Birşeyler ters gitti";
+        mekanListesi = [];
+    }else{
+        if(!mekanListesi.length){
+            mesaj = "Civarda herhangi bir mekan bulunamadı!";
+        }
+    }
+    res.render("anasayfa",{
+        "baslik" : "Anasayfa",
+        "sayfaBaslik" : {
+            "siteAd": "Mekanbul",
+            "slogan": "Mekanları keşfet"
+        },
+        "mekanlar" : mekanListesi,
+        "mesaj" : mesaj
+    });
+}
+
+const anaSayfa = function(req,res){
+    axios.get(apiSecenekleri.sunucu+apiSecenekleri.apiYolu,{
+        params: {
+            enlem: req.query.enlem,
+            boylam: req.query.boylam
+        }
+    }).then(function(response){
+        var i ,mekanlar;
+        mekanlar = response.data;
+        for(i=0;i<mekanlar.length;i++){
+            mekanlar[i].mesafe = mesafeyiFormatla(mekanlar[i].mesafe);
+        }
+        anaSayfaOlustur(res,mekanlar);
+    }).catch(function(hata){
+        anaSayfaOlustur(res,hata);
+    });
 }
 
 const mekanBilgisi = function(req,res,next){
