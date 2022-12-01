@@ -58,47 +58,41 @@ const anaSayfa = function(req,res){
     });
 }
 
-const mekanBilgisi = function(req,res,next){
-    res.render('mekanbilgisi',
-    {
-        "baslik": "Mekan Bilgisi",
-        "mekanBaslik": "Starbucks",
-        "mekanDetay":{
-            "ad":"Starbucks",
-            "adres":"Centrum Garden AVM",
-            "puan":"4",
-            "imkanlar":["Kahve","Pasta","Kek"],
-            "koordinatlar":{
-                "enlem":"37.7",
-                "boylam":"30.5"
-            },
-            "saatler": [
-                {
-                    "gunler": "Pazartesi-Cuma",
-                    "acilis": "9:00",
-                    "kapanis": "23:00",
-                    "kapali": false
-                },
-                {
-                    "gunler": "Cumartesi-Pazar",
-                    "acilis": "10:00",
-                    "kapanis": "22:00",
-                    "kapali": false
-                }
-            ],
-            "yorumlar":[
-                {
-                  "yorumYapan": "Alpay Özer",
-                  "puan":"4",
-                  "tarih":"20 Ekim 2022",
-                  "yorumMetni": "Kahveler iyi."
-
-                }
-            ]
-        }
+var detaySayfasiOlustur = function(res,mekanDetaylari){
+    mekanDetaylari.koordinat={
+        "enlem":mekanDetaylari.koordinat[0],
+        "boylam":mekanDetaylari.koordinat[1] 
     }
-    );
+    res.render('mekanbilgisi',{
+        mekanBaslik: mekanDetaylari.ad,
+        mekanDetay: mekanDetaylari
+    });
 }
+
+var hataGoster = function(res,hata){
+    var mesaj;
+    if(hata.response.status==404){
+        mesaj= "404, Sayfa bulunamadı!";
+    }else{
+        mesaj = hata.response.status+"hatası";
+    }
+    res.status(hata.response.status);
+    res.render('error',{
+        "mesaj": mesaj
+    });
+};
+
+
+const mekanBilgisi = function(req,res){
+    axios
+    .get(apiSecenekleri.sunucu+apiSecenekleri.apiYolu+req.params.mekanid)
+    .then(function(response){
+        detaySayfasiOlustur(res,response.data);
+    })
+    .catch(function(hata){
+        hataGoster(res,hata);
+    });
+};
 
 const yorumEkle = function(req,res,next){
     res.render('yorumekle', {title: 'Yorum ekle'});
