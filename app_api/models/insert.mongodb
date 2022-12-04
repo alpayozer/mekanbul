@@ -1,18 +1,18 @@
 const database = 'mekanbul';
 use(database);
 db.mekanlar.insertOne(
-{
+  {
   "ad": "Starbucks",
-  "adres": "Centrum Garden",
-  "puan": 5,
+  "adres": "Centrum Garden AVM",
+  "puan": "4",
   "imkanlar": [
-    "çay",
-    "kahve",
-    "pasta"
+    "Dünya Kahveleri",
+    "Kekler",
+    "Pastalar"
   ],
   "koordinat": [
-    37.83226584629666,
-    30.524732239878013
+    37.7,
+    30.5
   ],
   "saatler": [
     {
@@ -23,10 +23,9 @@ db.mekanlar.insertOne(
     },
     {
       "gunler": "Cumartesi-Pazar",
-      "acilis": "11:00",
-      "kapanis": "17:00",
+      "acilis": "10:00",
+      "kapanis": "22:00",
       "kapali": false
     }
   ]
-}
- );
+})
