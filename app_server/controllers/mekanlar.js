@@ -1,10 +1,8 @@
-var express = require('express');
-var router = express.Router();
-
 const axios=require("axios");
+
 var apiSecenekleri = {
     sunucu: "https://mekanbul.alpayzer.repl.co",
-    apiYolu: "/api/mekanlar"
+    apiYolu: "/api/mekanlar/"
 }
 
 var mesafeyiFormatla = function(mesafe){
@@ -21,7 +19,7 @@ var mesafeyiFormatla = function(mesafe){
 
 var anaSayfaOlustur = function(res,mekanListesi){
     var mesaj;
-    if(!(mekanListesi instanceof(Array))){
+    if(!(mekanListesi instanceof Array)){
         mesaj = "API HATASI: Birşeyler ters gitti";
         mekanListesi = [];
     }else{
