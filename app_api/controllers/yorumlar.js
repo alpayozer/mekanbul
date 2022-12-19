@@ -1,15 +1,12 @@
 var mongoose = require('mongoose');
 var Mekan = mongoose.model("mekan");
+var Kullanici = mongoose.model("kullanici");
 const cevapOlustur = function (res, status, content) {
     res
         .status(status)
         .json(content);
 };
 
-//expect(response.status).to.eql(201);
-
-//const response= await request.get(/api/mekanlar/${process.env.mekanid})
-//    /api/mekanlar/{{mekanid}}
 var sonPuanHesapla = function (gelenMekan) {
     var i, yorumSayisi, ortalamaPuan, toplamPuan;
     if (gelenMekan.yorumlar && gelenMekan.yorumlar.length > 0) {
@@ -36,15 +33,15 @@ var ortalamaPuanGuncelle = function (mekanid) {
     });
 };
 
-var yorumOlustur = function (req, res, gelenMekan) {
+var yorumOlustur = function (req, res, gelenMekan,kullaniciAdi) {
     if (!gelenMekan) {
-        cevapOlustur(res, 404, { "hata": "mekanid bulunamadı" });
+        cevapOlustur(res, 404, { mesaj: "mekanid bulunamadı",});
     } else {
         gelenMekan.yorumlar.push({
-            yorumYapan: req.body.yorumYapan,
+            yorumYapan: kullaniciAdi,
             puan: req.body.puan,
             yorumMetni: req.body.yorumMetni,
-            tarih: Date.now()
+            tarih: Date.now(),
         });
         gelenMekan.save(function (hata, mekan) {
             var yorum;
@@ -55,26 +52,40 @@ var yorumOlustur = function (req, res, gelenMekan) {
                 yorum = mekan.yorumlar[mekan.yorumlar.length - 1];
                 cevapOlustur(res, 201, yorum);
             }
-        })
+        });
     }
 };
 
-const yorumEkle = function (req, res) {
-    const mekanid = req.params.mekanid;
-    if (mekanid) {
-        Mekan
-            .findById(mekanid)
-            .select("yorumlar")
-            .exec((hata, gelenMekan) => {
-                if (hata) {
+const kullaniciGetir = (req,res,callback) =>{
+    if(req.auth && req.auth.eposta){
+        Kullanici.findOne({eposta:req.auth.eposta}).exec((hata,kullanici)=>{
+            if(!kullanici){
+                return res.status(404).json({"hata":"Kullanıcı bulunamadı!"});
+            }else if(hata){
+                return res.status(404).json(hata);
+            }
+            callback(req,res,kullanici.adsoyad);
+        });
+    }else{
+        return res.status(404).json({"hata":"Kullanıcı bulunamadı!"});
+    }
+};
+
+const yorumEkle = (req, res) =>{
+    kullaniciGetir(req,res,(req,res,kullaniciAdi)=>{
+        const mekanid = req.params.mekanid;
+        if(mekanid){
+            Mekan.findById(mekanid).select('yorumlar').exec((hata,mekan)=>{
+                if(hata){
                     res.status(400).json(hata);
-                } else {
-                    yorumOlustur(req, res, gelenMekan);
+                }else{
+                    yorumOlustur(req,res,mekan,kullaniciAdi);
                 }
             });
-    } else {
-        res.status(404).json({ mesaj: "Mekan bulunamadı." });
-    }
+        }else{
+            res.status(404).json({"hata":"Mekan bulunamadı"});
+        }
+    });
 };
 
 const yorumSil = function (req, res) {
@@ -185,9 +196,13 @@ const yorumGetir = function (req, res) {
     }
 };
 
+
+
 module.exports = {
     yorumEkle,
     yorumSil,
     yorumGuncelle,
-    yorumGetir
+    yorumGetir,
+    kullaniciGetir,
+    yorumOlustur,
 }

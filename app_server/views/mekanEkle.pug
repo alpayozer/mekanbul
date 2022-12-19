@@ -1,0 +1,65 @@
+extends layout
+
+block content
+  .row.page-header 
+    .col-lg-12
+      h1= baslik
+  .row
+    .col-xs-12.col-md-6 
+      form.form-horizontal(action='',method='post',role='form',id='mekanEkle')
+        .form-group 
+          label.col-xs-10.col-sm-2.control-label(for='adsoyad') Mekan Adı 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='adsoyad')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='adres') Adres 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='adres')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='imkanlar') İmkanlar 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='imkanlar')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='enlem') Enlem 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='enlem')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Boylam 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Gunler-1 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Acilis-1 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Kapanis-1 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Kapali-1 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')    
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Gunler-2 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Acilis-2 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Kapanis-2 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+        .form-group
+          label.col-xs-10.col-sm-2.control-label(for='boylam') Kapalı-2 
+          .col-xs-12.col-sm-10 
+            input#name.form-control(name='boylam')
+          
+        
+        button.btn.btn-default.pull-right() Mekan Ekle 
+    .col-xs-12.col-md-4

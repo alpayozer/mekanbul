@@ -10,5 +10,7 @@ router.get('/mekan/:mekanid', ctrlMekanlar.mekanBilgisi);
 router.get('/mekan/:mekanid/yorum/yeni', ctrlMekanlar.yorumEkle);
 router.post('/mekan/:mekanid/yorum/yeni', ctrlMekanlar.yorumumuEkle);
 router.get('/hakkinda', ctrtDigerleri.hakkinda);
+router.get('/admin', ctrtDigerleri.adminSayfasi);
+router.get('/panel', ctrtDigerleri.adminDetaySayfasi);
 
 module.exports = router;
