@@ -42,6 +42,28 @@ const anaSayfaOlustur = function (res, mekanListesi) {
   })
 }
 
+const adminSayfaOlustur = function (res, mekanListesi) {
+  var mesaj
+  if (!(mekanListesi instanceof Array)) {
+    mesaj = "API hatası!"
+    mekanListesi = []
+  }
+  else {
+    if (!mekanListesi.length) {
+      mesaj = "Civarda herhangi bir mekan yok."
+    }
+  }
+  res.render("panel", {
+    "baslik": "Anasayfa",
+    "sayfaBaslik": {
+      "siteAd": "Mekanbul",
+      "slogan": "Mekanları Keşfet"
+    },
+    "mekanlar": mekanListesi,
+    "mesaj": mesaj
+  })
+}
+
 const anaSayfa = function (req, res, next) {
   axios.get(apiSecenekleri.sunucu + apiSecenekleri.apiYolu, {
     params: {
@@ -59,6 +81,25 @@ const anaSayfa = function (req, res, next) {
     anaSayfaOlustur(res, hata)
   })
 }
+
+const adminPanel = function (req, res, next) {
+  axios.get(apiSecenekleri.sunucu + apiSecenekleri.apiYolu, {
+    params: {
+      enlem: req.query.enlem,
+      boylam: req.query.boylam
+    }
+  }).then(function (response) {
+    var i, mekanlar
+    mekanlar = response.data
+    for (i = 0; i < mekanlar.length; i++) {
+      mekanlar[i].mesafe = mesafeyiFormatla(mekanlar[i].mesafe)
+    }
+    adminSayfaOlustur(res, mekanlar)
+  }).catch(function (hata) {
+    adminSayfaOlustur(res, hata)
+  })
+}
+
 
 const detaySayfasiOlustur = function (res, mekanDetaylari) {
   mekanDetaylari.koordinat = {
@@ -139,45 +180,11 @@ const girisYap = function (req, res) {
   }
 }
 
-const mekanimiEkle = function (req, res) {
-  var eklenenMekan;
-  
-  //if(!req.body.adsoyad || !req.body.yorum){
-  //  res.redirect("/mekan/"+mekanid+"/yorum/yeni?hata=evet");
-  //}else{
-    eklenenMekan=Mekan.create({
-      ad: req.body.ad,
-      adres: req.body.adres,
-      imkanlar: req.body.imkanlar.split(","),
-      koordinatlar: [parseFloat(req.body.enlem),parseFloat(req.body.boylam)],
-      saatler: [{
-          gunler: req.body.gunler1,
-          acilis: req.body.acilis1,
-          kapanis: req.body.kapanis1,
-          kapali: req.body.kapali1
-      },{
-          gunler: req.body.gunler2,
-          acilis: req.body.acilis2,
-          kapanis: req.body.kapanis2,
-          kapali: req.body.kapali2
-      }]
-  },function(hata,mekan){
-      if(hata){
-          cevapOlustur(res,400,hata);
-      }else{
-          cevapOlustur(res,201,mekan);
-      }
-  });
-    axios.post(apiSecenekleri.sunucu + apiSecenekleri.apiYolu + mekanid + "/", eklenenMekan).then(function(){
-      res.redirect("/mekan/" + mekanid);
-    });
-  }
-//}
-
 module.exports = {
   anaSayfa,
   mekanBilgisi,
   yorumEkle,
   yorumumuEkle,
   girisYap,
+  adminPanel,
 }
